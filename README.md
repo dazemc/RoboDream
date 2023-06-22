@@ -1,4 +1,6 @@
 # RoboDream
+![Enabling](https://github.com/dazemc/RoboDream/assets/5232234/a7484bfe-10b7-4d79-a1ef-3822c31721f3)
+
 
 **Note: This project is a work-in-progress and currently has limited functionality.**
 
@@ -29,3 +31,5 @@ The game's assets, such as images and sounds, are located in the respective fold
 ## Future Work
 
 This project is still under development. Future updates will include new characters, more interactive elements, level designs, and other enhancements to improve the game experience.
+
+![Dead](https://github.com/dazemc/RoboDream/assets/5232234/9698f03e-53a8-4190-ad44-bf06ee05982d)
