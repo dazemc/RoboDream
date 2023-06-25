@@ -3,11 +3,11 @@ import asyncio
 
 ENABLE_SOUND = True
 
-walk_sfx_file = 'assets/Characters/Swordsman/SFX/Pick_UP.ogg'
-attack_1_sfx_file = 'assets/Characters/Swordsman/SFX/Attack_1.ogg'
+walk_sfx_file = 'assets/Characters/Swordsman/SFX/Pick_UP.wav'
+attack_1_sfx_file = 'assets/Characters/Swordsman/SFX/Attack_1.wav'
 
-skeleton_walk_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_step.ogg'
-skeleton_attack_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_attack.ogg'
+skeleton_walk_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_step.mp3'
+skeleton_attack_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_attack.mp3'
 
 class Fighter:
     def __init__(self, animation_frames, action, x, y):

@@ -27,7 +27,7 @@ update_time = pygame.time.get_ticks()
 async def main():
     # BGM
     if ENABLE_SOUND:
-        BGM = pygame.mixer.Sound("assets/BGM/2019-01-10_-_Land_of_8_Bits_-_Stephen_Bennett.ogg")
+        BGM = pygame.mixer.Sound("assets/BGM/2019-01-10_-_Land_of_8_Bits_-_Stephen_Bennett.mp3")
         BGM.set_volume(0.5)
         BGM.play(loops=-1)
 
