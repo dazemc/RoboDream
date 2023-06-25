@@ -3,8 +3,6 @@ import asyncio
 import spritesheet, fighter
 from pygame.locals import *
 
-
-
 pygame.init()
 pygame.mixer.init()
 
@@ -16,25 +14,26 @@ BLACK = (0, 0, 0)
 LEVEL = 1
 ENEMIES = True
 SCORE_TEXT = f"Level: "
-LOSING_SCORE_TEXT = f"YOU DIED!\n At Level: "
+LOSING_SCORE_TEXT = f"YOU DIED! At Level: "
 SCORE_LOC = (80, 30)
 LOSING_SCORE_LOC = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+ENABLE_SOUND = True
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Robo Dream")
 update_time = pygame.time.get_ticks()
+
+
 async def main():
     # BGM
-    # BGM = pygame.mixer.Sound("assets/BGM/2019-01-10_-_Land_of_8_Bits_-_Stephen_Bennett.ogg")
-    # BGM.set_volume(0.5)
-    # BGM.play(loops=-1)
+    if ENABLE_SOUND:
+        BGM = pygame.mixer.Sound("assets/BGM/2019-01-10_-_Land_of_8_Bits_-_Stephen_Bennett.ogg")
+        BGM.set_volume(0.5)
+        BGM.play(loops=-1)
 
     # Images
     BG = pygame.image.load("assets/Backgrounds/background.png").convert_alpha()
     BG = pygame.transform.scale(BG, (1280, 720))
-
-
-
 
     # Stores animations into a list so they can be accessed by their index
     # 0: Idle, 1: Attack1, 2: Hurt, 3: Dead, 4: Walk
@@ -43,7 +42,6 @@ async def main():
         for i in range(frame_number):
             animation_list.append(spritesheet.get_image(i, xy, xy, scale, color_key))
         return animation_list
-
 
     # Swordsman Animations
     # IDLE
@@ -111,7 +109,6 @@ async def main():
     # Skeleton
     skeletons = []
 
-
     def render_text(txt, loc, color, size, background):
         # Font/Text
         font = pygame.font.Font('assets/Font/DigitalDisco-Thin.ttf', size)
@@ -130,24 +127,22 @@ async def main():
                 skeletons.append(fighter.Fighter(skeleton_animation_frames, 4, start_x, 430))
                 start_x -= 256
 
-
     def pixel_collision(skeleton):
-        if swordsman.mask.overlap(skeleton.mask, (skeleton.rect.x - swordsman.rect.x, skeleton.rect.y - swordsman.rect.y)):
+        if swordsman.mask.overlap(skeleton.mask,
+                                  (skeleton.rect.x - swordsman.rect.x, skeleton.rect.y - swordsman.rect.y)):
             if swordsman.action == 1:
                 skeleton.action = 3
                 skeleton.move = False
                 if skeleton.alive:
                     skeleton.frame_index = 0
                     skeleton.alive = False
-            if skeleton.action == 1:
+            if skeleton.action == 1 and skeleton.frame_index > 0:
                 if swordsman.alive:
                     swordsman.frame_index = 0
                     swordsman.alive = False
             if not swordsman.alive:
                 pygame.event.set_blocked(KEYDOWN)
                 pygame.event.set_blocked(KEYUP)
-
-
 
     start()
 
@@ -159,7 +154,6 @@ async def main():
         CLOCK.tick(FPS)
         SCREEN.blit(BG, (0, 0))
 
-
         # EVENT handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -167,6 +161,19 @@ async def main():
                 pygame.quit()
                 exit()
             # Keyboard input
+            if event.type == pygame.MOUSEBUTTONDOWN and swordsman.action == 3:
+                SCREEN.fill(BLACK)
+                SCREEN.blit(BG, (0, 0))
+                skeletons = []
+                swordsman.alive = True
+                swordsman.frame_index = 0
+                swordsman.action = 0
+                swordsman.stop_animation = False
+                LEVEL = 0
+                pygame.event.set_allowed(KEYDOWN)
+                pygame.event.set_allowed(KEYUP)
+            # if event.type == pygame.MOUSEBUTTONUP and LEVEL == 1:
+            #
             if event.type == pygame.KEYDOWN:
                 # ATTACK1
                 if event.key == pygame.K_SPACE:
@@ -189,10 +196,6 @@ async def main():
                 if event.key == pygame.K_LSHIFT:
                     swordsman.run = True
             if event.type == pygame.KEYUP:
-                # ATTACK1
-                # if event.key == pygame.K_SPACE:
-                #     swordsman.frame_index = 0
-                #     swordsman.action = 0
                 # Right
                 if event.key == pygame.K_d:
                     swordsman.frame_index = 0
@@ -227,10 +230,11 @@ async def main():
 
         if not swordsman.alive:
             render_text(LOSING_SCORE_TEXT + str(LEVEL), LOSING_SCORE_LOC, 'red', 64, True)
-            render_text('Play Again?', (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150), 'green', 64, True)
+            render_text('Play Again? Click anywhere', (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150), 'green', 64, True)
 
         render_text(SCORE_TEXT + str(LEVEL), SCORE_LOC, 'white', 32, False)
         pygame.display.update()
         await asyncio.sleep(0)
+
 
 asyncio.run(main())
