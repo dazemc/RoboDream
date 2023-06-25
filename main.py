@@ -9,6 +9,8 @@ CLOCK = pygame.time.Clock()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 BLACK = (0, 0, 0)
+LEVEL = 1
+ENEMIES = True
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Robo Dream")
@@ -19,10 +21,11 @@ BGM = pygame.mixer.Sound("BGM/2019-01-10_-_Land_of_8_Bits_-_Stephen_Bennett.mp3"
 BGM.set_volume(0.5)
 BGM.play(loops=-1)
 
-
 # Images
 BG = pygame.image.load("Backgrounds/background.png").convert_alpha()
 BG = pygame.transform.scale(BG, (1280, 720))
+
+
 
 # Stores animations into a list so they can be accessed by their index
 # 0: Idle, 1: Attack1, 2: Hurt, 3: Dead, 4: Walk
@@ -31,6 +34,7 @@ def build_animations(frame_number, spritesheet, xy, scale, color_key):
     for i in range(frame_number):
         animation_list.append(spritesheet.get_image(i, xy, xy, scale, color_key))
     return animation_list
+
 
 # Swordsman Animations
 # IDLE
@@ -92,18 +96,53 @@ skeleton_animation_frames.append(build_animations(4, skeleton_attack1_sheet, 128
 skeleton_animation_frames.append(build_animations(2, skeleton_hurt_sheet, 128, 2, BLACK))
 # DEAD
 skeleton_animation_frames.append(build_animations(4, skeleton_dead_sheet, 128, 2, BLACK))
-#WALK
+# WALK
 skeleton_animation_frames.append(build_animations(7, skeleton_walk_sheet, 128, 2, BLACK))
 # Call enemies
 # Skeleton
-if swordsman.first_start:
-    skeleton1 = fighter.Fighter(skeleton_animation_frames, 4, 100, 430)
+skeletons = []
 
+
+def score():
+    # Font/Text
+    font = pygame.font.Font('Font/DigitalDisco-Thin.ttf', 32)
+    text = font.render(f'Level: {LEVEL}', False, 'white')
+    textRect = text.get_rect()
+    textRect.center = (80, 30)
+    SCREEN.blit(text, textRect)
+
+def start():
+    if swordsman.first_start:
+        start_x = -128
+        for i in range(LEVEL):
+            skeletons.append(fighter.Fighter(skeleton_animation_frames, 4, start_x, 430))
+            start_x -= 256
+
+
+def pixel_collision(skeleton):
+    if swordsman.mask.overlap(skeleton.mask, (skeleton.rect.x - swordsman.rect.x, skeleton.rect.y - swordsman.rect.y)):
+        if swordsman.action == 1:
+            skeleton.action = 3
+            skeleton.move = False
+            if skeleton.alive:
+                skeleton.frame_index = 0
+                skeleton.alive = False
+        if skeleton.action == 1:
+            if swordsman.alive:
+                swordsman.frame_index = 0
+                swordsman.alive = False
+        if not swordsman.alive:
+            pygame.event.set_blocked(KEYDOWN)
+            pygame.event.set_blocked(KEYUP)
+
+start()
 run = True
 while run:
     # Background and FPS
     CLOCK.tick(FPS)
     SCREEN.blit(BG, (0, 0))
+
+
 
     # EVENT handler
     for event in pygame.event.get():
@@ -154,37 +193,21 @@ while run:
 
     # Draw swordsman
     swordsman.main_update(SCREEN)
-    skeleton1.enemy_update(SCREEN)
+    for skeleton in skeletons:
+        skeleton.enemy_update(SCREEN)
 
     # Collision
-    # if swordsman.action == 1:
-    #     swordsman.rect.inflate(300, 300)
-    #     if swordsman.rect.colliderect(skeleton1.rect):
-    #         if skeleton1.alive == False:
-    #             print("Not Dead")
-    #         if skeleton1.alive:
-    #             print("Dead")
-    #         if swordsman.action == 1:
-    #             skeleton1.frame_index = 0
-    #             skeleton1.action = 3
-    #             skeleton1.move = False
-    #             skeleton1.alive = False
+    skeleton_alive = []
+    for skeleton in skeletons:
+        pixel_collision(skeleton)
+        if skeleton.alive:
+            skeleton_alive.append(True)
+    if True not in skeleton_alive:
+        ENEMIES = False
+        LEVEL += 1
+        start()
 
-    if swordsman.mask.overlap(skeleton1.mask, (skeleton1.rect.x - swordsman.rect.x, skeleton1.rect.y - swordsman.rect.y)):
-        if swordsman.action == 1:
-            skeleton1.action = 3
-            skeleton1.move = False
-            if skeleton1.alive:
-                skeleton1.frame_index = 0
-                skeleton1.alive = False
-        if skeleton1.action == 1:
-            if swordsman.alive:
-                swordsman.frame_index = 0
-                swordsman.alive = False
-        if not swordsman.alive:
-            pygame.event.set_blocked(KEYDOWN)
-            pygame.event.set_blocked(KEYUP)
-
+    score()
     pygame.display.update()
 
 pygame.quit()
