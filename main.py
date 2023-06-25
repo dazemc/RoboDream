@@ -23,53 +23,80 @@ BGM.play(loops=-1)
 BG = pygame.image.load("Backgrounds/background.png").convert_alpha()
 BG = pygame.transform.scale(BG, (1280, 720))
 
+# Stores animations into a list so they can be accessed by their index
+# 0: Idle, 1: Attack1, 2: Hurt, 3: Dead, 4: Walk
+def build_animations(frame_number, spritesheet, xy, scale, color_key):
+    animation_list = []
+    for i in range(frame_number):
+        animation_list.append(spritesheet.get_image(i, xy, xy, scale, color_key))
+    return animation_list
+
 # Swordsman Animations
 # IDLE
-swordsman_idle_sheet_image = pygame.image.load('Swordsman/Idle.png').convert_alpha()
+swordsman_idle_sheet_image = pygame.image.load('Characters/Swordsman/Idle.png').convert_alpha()
 swordsman_idle_sheet = spritesheet.SpriteSheet(swordsman_idle_sheet_image)
 # ATTACK 01
-swordsman_attack1_sheet_image = pygame.image.load("Swordsman/Attack_1.png").convert_alpha()
+swordsman_attack1_sheet_image = pygame.image.load("Characters/Swordsman/Attack_1.png").convert_alpha()
 swordsman_attack1_sheet = spritesheet.SpriteSheet(swordsman_attack1_sheet_image)
 # HURT
-swordsman_hurt_sheet_image = pygame.image.load('Swordsman/Hurt.png').convert_alpha()
+swordsman_hurt_sheet_image = pygame.image.load('Characters/Swordsman/Hurt.png').convert_alpha()
 swordsman_hurt_sheet = spritesheet.SpriteSheet(swordsman_hurt_sheet_image)
 # DEAD
-swordsman_dead_sheet_image = pygame.image.load("Swordsman/Dead.png").convert_alpha()
+swordsman_dead_sheet_image = pygame.image.load("Characters/Swordsman/Dead.png").convert_alpha()
 swordsman_dead_sheet = spritesheet.SpriteSheet(swordsman_dead_sheet_image)
 # WALK
-swordsman_walk_sheet_image = pygame.image.load("Swordsman/Pick_Up.png").convert_alpha()
+swordsman_walk_sheet_image = pygame.image.load("Characters/Swordsman/Pick_Up.png").convert_alpha()
 swordsman_walk_sheet = spritesheet.SpriteSheet(swordsman_walk_sheet_image)
 
-# Build Animations
-animation_frames = [] # 0: Idle, 1: Attack1, 2: Hurt, 3: Dead, 4: Walk
+# Skeleton Animations
+# IDLE
+skeleton_idle_sheet_image = pygame.image.load('Characters/Skeleton_Warrior/Idle.png').convert_alpha()
+skeleton_idle_sheet = spritesheet.SpriteSheet(skeleton_idle_sheet_image)
+# ATTACK3
+skeleton_attack1_sheet_image = pygame.image.load('Characters/Skeleton_Warrior/Attack_3.png').convert_alpha()
+skeleton_attack1_sheet = spritesheet.SpriteSheet(skeleton_attack1_sheet_image)
+# HURT
+skeleton_hurt_sheet_image = pygame.image.load('Characters/Skeleton_Warrior/Hurt.png').convert_alpha()
+skeleton_hurt_sheet = spritesheet.SpriteSheet(skeleton_hurt_sheet_image)
+# DEAD
+skeleton_dead_sheet_image = pygame.image.load('Characters/Skeleton_Warrior/Dead.png').convert_alpha()
+skeleton_dead_sheet = spritesheet.SpriteSheet(skeleton_dead_sheet_image)
+# Walk
+skeleton_walk_sheet_image = pygame.image.load('Characters/Skeleton_Warrior/Walk.png').convert_alpha()
+skeleton_walk_sheet = spritesheet.SpriteSheet(skeleton_walk_sheet_image)
+# Build Animations for Swordsman
+swordsman_animation_frames = []
 temp_list = []
 # IDLE
-for i in range(5):
-    temp_list.append(swordsman_idle_sheet.get_image(i, 128, 128, 2, BLACK))
-animation_frames.append(temp_list)
-temp_list = []
+swordsman_animation_frames.append(build_animations(5, swordsman_idle_sheet, 128, 2, BLACK))
 # ATTACK1
-for i in range(4):
-    temp_list.append(swordsman_attack1_sheet.get_image(i, 128, 128, 2, BLACK))
-animation_frames.append(temp_list)
-temp_list = []
+swordsman_animation_frames.append(build_animations(4, swordsman_attack1_sheet, 128, 2, BLACK))
 # HURT
-for i in range(3):
-    temp_list.append(swordsman_hurt_sheet.get_image(i, 128, 128, 2, BLACK))
-animation_frames.append(temp_list)
-temp_list = []
+swordsman_animation_frames.append(build_animations(3, swordsman_hurt_sheet, 128, 2, BLACK))
 # DEAD
-for i in range(4):
-    temp_list.append(swordsman_dead_sheet.get_image(i, 128, 128, 2, BLACK))
-animation_frames.append(temp_list)
-temp_list = []
+swordsman_animation_frames.append(build_animations(4, swordsman_dead_sheet, 128, 2, BLACK))
 # WALK
-for i in range(8):
-    temp_list.append(swordsman_walk_sheet.get_image(i, 128, 128, 2, BLACK))
-animation_frames.append(temp_list)
+swordsman_animation_frames.append(build_animations(8, swordsman_walk_sheet, 128, 2, BLACK))
 # temp_list = []
 # Call player
-swordsman = fighter.Fighter(animation_frames, 0, 310, 525)
+swordsman = fighter.Fighter(swordsman_animation_frames, 0, 600, 525)
+
+# Skeleton Animation
+skeleton_animation_frames = []
+# IDLE
+skeleton_animation_frames.append(build_animations(7, skeleton_idle_sheet, 128, 2, BLACK))
+# ATTACK3
+skeleton_animation_frames.append(build_animations(4, skeleton_attack1_sheet, 128, 2, BLACK))
+# Hurt
+skeleton_animation_frames.append(build_animations(2, skeleton_hurt_sheet, 128, 2, BLACK))
+# DEAD
+skeleton_animation_frames.append(build_animations(4, skeleton_dead_sheet, 128, 2, BLACK))
+#WALK
+skeleton_animation_frames.append(build_animations(7, skeleton_walk_sheet, 128, 2, BLACK))
+# Call enemies
+# Skeleton
+
+skeleton1 = fighter.Fighter(skeleton_animation_frames, 4, 100, 430)
 
 run = True
 while run:
@@ -125,7 +152,22 @@ while run:
                 swordsman.run = False
 
     # Draw swordsman
-    swordsman.update(SCREEN)
+    swordsman.main_update(SCREEN)
+    skeleton1.enemy_update(SCREEN)
+
+    # Collision
+    if swordsman.action == 1:
+        swordsman.rect.inflate(300, 300)
+        if swordsman.rect.colliderect(skeleton1.rect):
+            if skeleton1.alive == False:
+                print("Not Dead")
+            if skeleton1.alive:
+                print("Dead")
+            if swordsman.action == 1:
+                skeleton1.frame_index = 0
+                skeleton1.action = 3
+                skeleton1.move = False
+                skeleton1.alive = False
 
 
     pygame.display.update()
