@@ -23,6 +23,7 @@ class Fighter:
         self.enemy = False
         self.stop_animation = False
         self.first_start = True
+        self.remove = False
 
 
     def main_update(self, screen):
@@ -191,4 +192,8 @@ class Fighter:
         # Attacking player
         if self.move == True:
             self.x += 2
+
+        # Removing enemy off screen
+        if self.x > 1280 + 128:
+            self.remove = True
 

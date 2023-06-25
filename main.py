@@ -11,6 +11,10 @@ SCREEN_HEIGHT = 720
 BLACK = (0, 0, 0)
 LEVEL = 1
 ENEMIES = True
+SCORE_TEXT = f"Level: "
+LOSING_SCORE_TEXT = f"YOU DIED!\n At Level: "
+SCORE_LOC = (80, 30)
+LOSING_SCORE_LOC = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Robo Dream")
@@ -25,6 +29,8 @@ BGM.play(loops=-1)
 BG = pygame.image.load("Backgrounds/background.png").convert_alpha()
 BG = pygame.transform.scale(BG, (1280, 720))
 
+# loop check
+run = True
 
 
 # Stores animations into a list so they can be accessed by their index
@@ -103,12 +109,15 @@ skeleton_animation_frames.append(build_animations(7, skeleton_walk_sheet, 128, 2
 skeletons = []
 
 
-def score():
+def render_text(txt, loc, color, size, background):
     # Font/Text
-    font = pygame.font.Font('Font/DigitalDisco-Thin.ttf', 32)
-    text = font.render(f'Level: {LEVEL}', False, 'white')
+    font = pygame.font.Font('Font/DigitalDisco-Thin.ttf', size)
+    if background:
+        text = font.render(txt, False, color, BLACK)
+    else:
+        text = font.render(txt, False, color)
     textRect = text.get_rect()
-    textRect.center = (80, 30)
+    textRect.center = loc
     SCREEN.blit(text, textRect)
 
 def start():
@@ -135,13 +144,13 @@ def pixel_collision(skeleton):
             pygame.event.set_blocked(KEYDOWN)
             pygame.event.set_blocked(KEYUP)
 
+
+
 start()
-run = True
 while run:
     # Background and FPS
     CLOCK.tick(FPS)
     SCREEN.blit(BG, (0, 0))
-
 
 
     # EVENT handler
@@ -194,7 +203,8 @@ while run:
     # Draw swordsman
     swordsman.main_update(SCREEN)
     for skeleton in skeletons:
-        skeleton.enemy_update(SCREEN)
+        if not skeleton.remove:
+            skeleton.enemy_update(SCREEN)
 
     # Collision
     skeleton_alive = []
@@ -207,7 +217,11 @@ while run:
         LEVEL += 1
         start()
 
-    score()
+    if not swordsman.alive:
+        render_text(LOSING_SCORE_TEXT + str(LEVEL), LOSING_SCORE_LOC, 'red', 64, True)
+        render_text('Play Again?', (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 150), 'green', 64, True)
+
+    render_text(SCORE_TEXT + str(LEVEL), SCORE_LOC, 'white', 32, False)
     pygame.display.update()
 
 pygame.quit()
