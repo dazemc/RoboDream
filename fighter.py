@@ -1,10 +1,11 @@
 import pygame
+import asyncio
 
-walk_sfx_file = 'Characters/Swordsman/SFX/Pick_UP.wav'
-attack_1_sfx_file = 'Characters/Swordsman/SFX/Attack_1.wav'
+walk_sfx_file = 'assets/Characters/Swordsman/SFX/Pick_UP.ogg'
+attack_1_sfx_file = 'assets/Characters/Swordsman/SFX/Attack_1.ogg'
 
-skeleton_walk_sfx_file = 'Characters/Skeleton_Warrior/SFX/skeleton_step.mp3'
-skeleton_attack_sfx_file = 'Characters/Skeleton_Warrior/SFX/skeleton_attack.mp3'
+skeleton_walk_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_step.ogg'
+skeleton_attack_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_attack.ogg'
 
 class Fighter:
     def __init__(self, animation_frames, action, x, y):
@@ -38,7 +39,6 @@ class Fighter:
         mask_image.set_colorkey((0, 0, 0))
         self.rect.center = (self.x, self.y)
 
-
         # MOVEMENT/SFX
         if self.alive:
             if self.action == 4:
@@ -48,26 +48,26 @@ class Fighter:
                     move_increments = 5
                 if self.move_right:
                     self.x += move_increments
-                    if self.frame_index % 2 == 0:
-                        walk_sfx = pygame.mixer.Sound(walk_sfx_file)
-                        walk_sfx.set_volume(0.3)
-                        walk_sfx.play(maxtime=600)
+                    # if self.frame_index % 2 == 0:
+                    #     walk_sfx = pygame.mixer.Sound(walk_sfx_file)
+                    #     walk_sfx.set_volume(0.3)
+                    #     walk_sfx.play(maxtime=600)
                 if self.move_left:
                     self.x -= move_increments
-                    if self.frame_index % 2 == 0:
-                        walk_sfx = pygame.mixer.Sound(walk_sfx_file)
-                        walk_sfx.set_volume(0.3)
-                        walk_sfx.play(maxtime=600)
+                    # if self.frame_index % 2 == 0:
+                    #     walk_sfx = pygame.mixer.Sound(walk_sfx_file)
+                    #     walk_sfx.set_volume(0.3)
+                    #     walk_sfx.play(maxtime=600)
                 if self.x >= 1280 + 128:
                     self.x = 0
                 if self.x < -128:
                     self.x = 1280
 
             # SFX
-            if self.action == 1:
-                attack_1_sfx = pygame.mixer.Sound(attack_1_sfx_file)
-                attack_1_sfx.set_volume(0.5)
-                attack_1_sfx.play(maxtime=800)
+            # if self.action == 1:
+            #     attack_1_sfx = pygame.mixer.Sound(attack_1_sfx_file)
+            #     attack_1_sfx.set_volume(0.5)
+            #     attack_1_sfx.play(maxtime=800)
 
             if (pygame.time.get_ticks() - self.update_time) > animation_cooldown:
                 self.update_time = pygame.time.get_ticks()
@@ -99,8 +99,6 @@ class Fighter:
 
 
 
-
-
         # Draw image
         if self.flip_h:
             image = pygame.transform.flip(image, True, False)
@@ -110,7 +108,6 @@ class Fighter:
             mask_image.set_colorkey((0, 0, 0))
         screen.blit(image, self.rect)
         # screen.blit(mask_image, self.rect)
-
 
     def enemy_update(self, screen):
 
@@ -137,23 +134,23 @@ class Fighter:
                         move_increments = 2
                     if self.move_right:
                         self.x += move_increments
-                        if self.frame_index % 2 == 0:
-                            walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
-                            walk_sfx.set_volume(0.3)
-                            walk_sfx.play(maxtime=600)
+                        # if self.frame_index % 2 == 0:
+                        #     walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
+                        #     walk_sfx.set_volume(0.3)
+                        #     walk_sfx.play(maxtime=600)
                     if self.move_left:
                         self.x -= move_increments
-                        if self.frame_index % 2 == 0:
-                            walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
-                            walk_sfx.set_volume(0.3)
-                            walk_sfx.play(maxtime=600)
+                        # if self.frame_index % 2 == 0:
+                        #     walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
+                        #     walk_sfx.set_volume(0.3)
+                        #     walk_sfx.play(maxtime=600)
 
 
                 # SFX
-                if self.action == 1:
-                    attack_1_sfx = pygame.mixer.Sound(skeleton_attack_sfx_file)
-                    attack_1_sfx.set_volume(0.5)
-                    attack_1_sfx.play(maxtime=800)
+                # if self.action == 1:
+                #     attack_1_sfx = pygame.mixer.Sound(skeleton_attack_sfx_file)
+                #     attack_1_sfx.set_volume(0.5)
+                #     attack_1_sfx.play(maxtime=800)
 
                 if (pygame.time.get_ticks() - self.update_time) > animation_cooldown:
                     self.update_time = pygame.time.get_ticks()
