@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import asyncio
 import spritesheet, fighter
@@ -126,6 +128,11 @@ async def main():
             for i in range(LEVEL):
                 skeletons.append(fighter.Fighter(skeleton_animation_frames, 4, start_x, 430))
                 start_x -= 256
+                other_side_skeleton = random.choice(skeletons)
+                if other_side_skeleton.alive:
+                    other_side_skeleton.other_move = True
+                    other_side_skeleton.x = SCREEN_WIDTH + (start_x * -1)
+                    other_side_skeleton.flip_h = True
 
     def pixel_collision(skeleton):
         if swordsman.mask.overlap(skeleton.mask,

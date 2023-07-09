@@ -3,7 +3,7 @@ import asyncio
 
 ENABLE_SOUND = True
 
-walk_sfx_file = 'assets/Characters/Swordsman/SFX/Pick_UP.wav'
+walk_sfx_file = 'assets/Characters/Swordsman/SFX/Pick_Up.wav'
 attack_1_sfx_file = 'assets/Characters/Swordsman/SFX/Attack_1.wav'
 
 skeleton_walk_sfx_file = 'assets/Characters/Skeleton_Warrior/SFX/skeleton_step.mp3'
@@ -22,6 +22,7 @@ class Fighter:
         self.move_left = False
         self.flip_h = False
         self.move = True
+        self.other_move = False
         self.alive = True
         self.enemy = False
         self.stop_animation = False
@@ -132,25 +133,13 @@ class Fighter:
         # MOVEMENT/SFX
         if self.x > -128:
             if self.alive:
-                if self.action == 4:
-                    if self.run:
-                        move_increments = 6
-                    else:
-                        move_increments = 2
-                    if self.move_right:
-                        self.x += move_increments
+                if self.action == 4 and self.move:
                         if ENABLE_SOUND:
                             if self.frame_index % 2 == 0:
                                 walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
                                 walk_sfx.set_volume(0.3)
                                 walk_sfx.play(maxtime=600)
-                    if self.move_left:
-                        self.x -= move_increments
-                        if ENABLE_SOUND:
-                            if self.frame_index % 2 == 0:
-                                walk_sfx = pygame.mixer.Sound(skeleton_walk_sfx_file)
-                                walk_sfx.set_volume(0.3)
-                                walk_sfx.play(maxtime=600)
+
 
 
                 # SFX
@@ -195,10 +184,9 @@ class Fighter:
             # screen.blit(mask_image, self.rect)
 
         # Attacking player
-        if self.move == True:
-            self.x += 2
-
-        # Removing enemy off screen
-        if self.x > 1280 + 128:
-            self.remove = True
+        if self.move:
+            if self.other_move:
+                self.x -= 2
+            else:
+                self.x += 2
 
