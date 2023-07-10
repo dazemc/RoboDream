@@ -1,5 +1,4 @@
 # RoboDream 
-[Click to play](https://dazemc.itch.io/robodream)
 
 ![Enabling](https://github.com/dazemc/RoboDream/assets/5232234/a7484bfe-10b7-4d79-a1ef-3822c31721f3)
 
